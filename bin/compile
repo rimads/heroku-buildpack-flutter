@@ -41,19 +41,25 @@ if [ -d "$CACHE_DIR/flutter" ]; then
   cp -R $CACHE_DIR/flutter $BUILD_DIR
 else
   print "Installing SDK from Github repository."
-  git clone https://github.com/flutter/flutter.git --quiet
+  git clone https://github.com/flutter/flutter.git 
 fi
 
 # Check if FLUTTER_VERSION variables is set.
 if [ -n "$FLUTTER_VERSION" ]; then
   # Load bash variables from flutter --machine --version and read it like  $FLUTTER_VERSION variable.
   flutter/bin/flutter --machine --version >flutter.json
+  echo "flutter.json"
+  cat flutter.json
   FLUTTER_INSTALLED_VERSION=$(grep -o '"frameworkVersion": *"[^"]*' flutter.json | grep -o '[^"]*$')
 
   # Check if the FLUTTER_VERSION is the same with the installed one.
+  echo "FLUTTER_INSTALLED_VERSION: $FLUTTER_INSTALLED_VERSION"
+  echo "FLUTTER_VERSION: $FLUTTER_VERSION"
   if [ "$FLUTTER_VERSION" != "$FLUTTER_INSTALLED_VERSION" ]; then
     print "Installing Flutter SDK version : $FLUTTER_VERSION"
-    flutter/bin/flutter version $FLUTTER_VERSION --quiet | indent
+    git checkout $FLUTTER_VERSION
+    flutter/bin/flutter --version
+    # flutter/bin/flutter version $FLUTTER_VERSION  | indent
   fi
   rm flutter.json
 
@@ -64,22 +70,22 @@ else
     flutter/bin/flutter channel stable | indent
   fi
 
-  flutter/bin/flutter upgrade --quiet | indent
+  flutter/bin/flutter upgrade  | indent
 fi
 
 print "Enabling Web support"
-flutter/bin/flutter config --enable-web --quiet | indent
+flutter/bin/flutter config --enable-web  | indent
 
 print "Running flutter clean command."
-flutter/bin/flutter clean --quiet | indent
+flutter/bin/flutter clean  | indent
 
 print "Getting packages from Flutter project"
-flutter/bin/flutter pub get --quiet | indent
+flutter/bin/flutter pub get  | indent
 
 PATH="$PATH":"$(pwd)/flutter/bin/"
 
 if [ -z "$FLUTTER_BUILD" ]; then
-  FLUTTER_BUILD="flutter build web --release --quiet"
+  FLUTTER_BUILD="flutter build web --release "
 fi
 
 print "Compiling the project with $FLUTTER_BUILD"
