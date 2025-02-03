@@ -57,7 +57,7 @@ if [ -n "$FLUTTER_VERSION" ]; then
   echo "FLUTTER_VERSION: $FLUTTER_VERSION"
   if [ "$FLUTTER_VERSION" != "$FLUTTER_INSTALLED_VERSION" ]; then
     print "Installing Flutter SDK version : $FLUTTER_VERSION"
-    git checkout $FLUTTER_VERSION
+    git clone https://github.com/flutter/flutter.git -b $FLUTTER_VERSION
     flutter/bin/flutter --version
     # flutter/bin/flutter version $FLUTTER_VERSION  | indent
   fi
